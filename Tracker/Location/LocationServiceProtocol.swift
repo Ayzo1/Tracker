@@ -1,10 +1,3 @@
-//
-//  LocationServiceProtocol.swift
-//  Tracker
-//
-//  Created by ayaz on 19.08.2022.
-//
-
 import Foundation
 
 protocol LocationServiceProtocol: NSObject {

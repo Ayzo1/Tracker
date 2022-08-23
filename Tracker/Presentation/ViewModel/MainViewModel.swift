@@ -2,25 +2,26 @@ import Foundation
 
 final class MainViewModel: MainViewModelProtocol {
 	
-	private var locationService: LocationServiceProtocol?
+	private var locationService: LocationServiceProtocol
 	
-	init() {
-		
+	init(locationService: LocationServiceProtocol) {
+		self.locationService = locationService
 	}
 	
 	var recieveData: ((Date, Double) -> Void)?
 	
 	func startTracking() {
-		locationService?.startLocating()
+		locationService.startLocating()
+		update()
 	}
 	
 	func stopTracking() {
-		locationService?.stopLocating()
+		locationService.stopLocating()
 	}
 	
 	private func update() {
-		locationService?.recieveLocation = { latitude, longitude, distance in
-			
+		locationService.recieveLocation = { [weak self] latitude, longitude, distance in
+			self?.recieveData?(Date(), distance)
 		}
 	}
 }
