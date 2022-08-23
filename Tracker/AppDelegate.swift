@@ -17,7 +17,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 		
 		window = UIWindow(frame: UIScreen.main.bounds)
 		// let temperatureViewController = TemperatureViewController()
-		// window?.rootViewController = UINavigationController(rootViewController: temperatureViewController)
+		window?.rootViewController = MainViewController()
 		window?.makeKeyAndVisible()
 		
 		return true
