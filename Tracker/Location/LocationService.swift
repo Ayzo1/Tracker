@@ -26,7 +26,6 @@ extension LocationService: CLLocationManagerDelegate {
 	
 	func locationManager(_ manager: CLLocationManager,
 						 didUpdateLocations locations: [CLLocation]) {
-		
 		guard let last = locations.last else {
 			return
 		}
