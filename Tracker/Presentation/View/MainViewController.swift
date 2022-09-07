@@ -31,6 +31,7 @@ final class MainViewController: UIViewController, MainViewProtocol {
 		map.mapType = .standard
 		map.isZoomEnabled = true
 		map.showsUserLocation = true
+        // map.layer.cornerRadius = map.frame.height / 2
 		return map
 	}()
 	
@@ -53,11 +54,16 @@ final class MainViewController: UIViewController, MainViewProtocol {
 		viewModel.startTracking()
 		update()
     }
+    
+    override func viewDidLayoutSubviews() {
+        mapView.layer.cornerRadius = mapView.frame.height / 2
+        print("aaa")
+    }
 	
 	// MARK: - Private methods
 	
 	private func configurateViews() {
-		view.backgroundColor = .red
+        view.backgroundColor = .systemYellow
 		view.addSubview(timeLabel)
 		setupTimeLabel()
 		view.addSubview(distanceLabel)

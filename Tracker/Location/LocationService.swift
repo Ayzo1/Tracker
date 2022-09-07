@@ -11,7 +11,10 @@ final class LocationService: NSObject, LocationServiceProtocol {
 		super.init()
 		locationManager.delegate = self
 		locationManager.requestAlwaysAuthorization()
-        locationManager.desiredAccuracy = kCLLocationAccuracyNearestTenMeters
+        // locationManager.desiredAccuracy = kCLLocationAccuracyNearestTenMeters
+        // locationManager.distanceFilter = 1
+        
+        locationManager.desiredAccuracy = kCLLocationAccuracyBest
         locationManager.distanceFilter = 1
 	}
 	
@@ -35,7 +38,6 @@ extension LocationService: CLLocationManagerDelegate {
 		if previousLocation != nil {
 			distance = last.distance(from: previousLocation!)
 		}
-        print(distance)
         recieveLocation?(last.coordinate.latitude, last.coordinate.longitude, distance, last.speed)
 		previousLocation = locations.last
 	}
