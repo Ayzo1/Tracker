@@ -3,7 +3,7 @@ import Foundation
 
 final class LocationService: NSObject, LocationServiceProtocol {
 	
-	var recieveLocation: ((Double, Double, Double) -> ())?
+	var recieveLocation: ((Double, Double, Double, Double) -> ())?
 	private let locationManager = CLLocationManager()
 	private var previousLocation: CLLocation?
 
@@ -11,6 +11,8 @@ final class LocationService: NSObject, LocationServiceProtocol {
 		super.init()
 		locationManager.delegate = self
 		locationManager.requestAlwaysAuthorization()
+        locationManager.desiredAccuracy = kCLLocationAccuracyNearestTenMeters
+        locationManager.distanceFilter = 1
 	}
 	
 	func startLocating() {
@@ -33,7 +35,8 @@ extension LocationService: CLLocationManagerDelegate {
 		if previousLocation != nil {
 			distance = last.distance(from: previousLocation!)
 		}
-		recieveLocation?(last.coordinate.latitude, last.coordinate.longitude, distance)
+        print(distance)
+        recieveLocation?(last.coordinate.latitude, last.coordinate.longitude, distance, last.speed)
 		previousLocation = locations.last
 	}
 }

@@ -5,7 +5,7 @@ final class MainViewModel: MainViewModelProtocol {
 	private var locationService: LocationServiceProtocol
 	private var distance: Double = 0
 	private var trip: Trip?
-	var recieveData: ((TimeInterval, Double, Double, Double) -> Void)?
+	var recieveData: ((ViewData) -> Void)?
 	var timer: Timer?
 	
 	init(locationService: LocationServiceProtocol) {
@@ -29,15 +29,17 @@ final class MainViewModel: MainViewModelProtocol {
 	}
 	
 	private func update() {
-		locationService.recieveLocation = { [weak self] latitude, longitude, distance in
+		locationService.recieveLocation = { [weak self] latitude, longitude, distance, speed in
 			self?.trip?.distance += distance
 			self?.trip?.points?.append((latitude, longitude))
-			let time = Date().timeIntervalSince(self?.trip?.startDate ?? Date())
-			self?.recieveData?(time, self?.trip?.distance ?? 0, latitude, longitude)
+			//let time = Date().timeIntervalSince(self?.trip?.startDate ?? Date())
+            let viewData = ViewData.location(ViewData.Location(latitude: latitude, longitude: longitude, distance: distance, speed: speed))
+			self?.recieveData?(viewData)
 		}
 	}
 	
 	@objc private func updateTimer() {
-		// print(timer?.timeInterval)
+        let time = Date().timeIntervalSince(trip?.startDate ?? Date())
+        recieveData?(ViewData.time(time))
 	}
 }

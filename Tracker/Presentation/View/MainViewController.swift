@@ -7,6 +7,12 @@ final class MainViewController: UIViewController, MainViewProtocol {
 	
 	private var viewModel: MainViewModelProtocol
 	
+    private var speedLabel: UILabel = {
+        let label = UILabel()
+        label.translatesAutoresizingMaskIntoConstraints = false
+        return label
+    }()
+    
 	private var timeLabel: UILabel = {
 		let label = UILabel()
 		label.translatesAutoresizingMaskIntoConstraints = false
@@ -43,7 +49,7 @@ final class MainViewController: UIViewController, MainViewProtocol {
 	
     override func viewDidLoad() {
         super.viewDidLoad()
-		
+        configurateViews()
 		viewModel.startTracking()
 		update()
     }
@@ -58,16 +64,29 @@ final class MainViewController: UIViewController, MainViewProtocol {
 		setupDistanceLabel()
 		view.addSubview(mapView)
 		setupMapView()
+        view.addSubview(speedLabel)
+        setupSpeedLabel()
 	}
 	
 	private func update() {
-		viewModel.recieveData = { [weak self] time, distance, latitude, longitude in
-			self?.timeLabel.text = self?.createTimeString(time: time) ?? " "
-			self?.distanceLabel.text = "\(Int(distance))m"
-			let coordinate = CLLocationCoordinate2D(latitude: latitude, longitude: longitude)
-			let span = MKCoordinateSpan(latitudeDelta: 0.01, longitudeDelta: 0.01)
-			let region = MKCoordinateRegion(center: coordinate, span: span)
-			self?.mapView.setRegion(region, animated: true)
+		viewModel.recieveData = { [weak self] viewData in
+            
+            switch viewData {
+            case .time(let time):
+                self?.timeLabel.text = self?.createTimeString(time: time) ?? " "
+                break
+            case .location(let location):
+                self?.distanceLabel.text = "\(Int(location.distance))m"
+                self?.speedLabel.text = "\(Int(location.speed))"
+                let coordinate = CLLocationCoordinate2D(latitude: location.latitude, longitude: location.longitude)
+                let span = MKCoordinateSpan(latitudeDelta: 0.01, longitudeDelta: 0.01)
+                let region = MKCoordinateRegion(center: coordinate, span: span)
+                self?.mapView.setRegion(region, animated: true)
+                break
+            case .error(let error):
+                print(error.localizedDescription)
+                break
+            }
 		}
 	}
 	
@@ -97,6 +116,11 @@ final class MainViewController: UIViewController, MainViewProtocol {
 		distanceLabel.topAnchor.constraint(equalTo: timeLabel.bottomAnchor, constant: 20).isActive = true
 		distanceLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
 	}
+    
+    private func setupSpeedLabel() {
+        speedLabel.topAnchor.constraint(equalTo: distanceLabel.bottomAnchor, constant: 20).isActive = true
+        speedLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
+    }
 	
 	private func setupMapView() {
 		mapView.topAnchor.constraint(equalTo: view.topAnchor, constant: 40).isActive = true

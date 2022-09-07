@@ -51,7 +51,7 @@
          </BuildableReference>
       </BuildableProductRunnable>
       <LocationScenarioReference
-         identifier = "../../XCodeGPX.gpx"
+         identifier = "../1.gpx"
          referenceType = "0">
       </LocationScenarioReference>
    </LaunchAction>
