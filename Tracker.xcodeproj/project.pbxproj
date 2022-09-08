@@ -11,6 +11,7 @@
 		8F28C6D028B4EDA70095E375 /* MainViewModelProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F28C6CF28B4EDA70095E375 /* MainViewModelProtocol.swift */; };
 		8F28C6DC28B54E970095E375 /* MainViewProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F28C6DB28B54E970095E375 /* MainViewProtocol.swift */; };
 		8F28C6DF28B61E5A0095E375 /* Trip.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F28C6DE28B61E5A0095E375 /* Trip.swift */; };
+		8F28C6E928C9D4F70095E375 /* TrackingState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F28C6E828C9D4F70095E375 /* TrackingState.swift */; };
 		8F4667FD28C8B0CF00744F1A /* ViewData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F4667FC28C8B0CF00744F1A /* ViewData.swift */; };
 		8F96528128AE35F7003A1F82 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F96528028AE35F7003A1F82 /* AppDelegate.swift */; };
 		8F96528A28AE3605003A1F82 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 8F96528928AE3605003A1F82 /* Assets.xcassets */; };
@@ -27,6 +28,7 @@
 		8F28C6CF28B4EDA70095E375 /* MainViewModelProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainViewModelProtocol.swift; sourceTree = "<group>"; };
 		8F28C6DB28B54E970095E375 /* MainViewProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainViewProtocol.swift; sourceTree = "<group>"; };
 		8F28C6DE28B61E5A0095E375 /* Trip.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Trip.swift; sourceTree = "<group>"; };
+		8F28C6E828C9D4F70095E375 /* TrackingState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackingState.swift; sourceTree = "<group>"; };
 		8F4667FC28C8B0CF00744F1A /* ViewData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewData.swift; sourceTree = "<group>"; };
 		8F96527D28AE35F7003A1F82 /* Tracker.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Tracker.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		8F96528028AE35F7003A1F82 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -136,6 +138,7 @@
 		8F9652AC28B4A343003A1F82 /* Model */ = {
 			isa = PBXGroup;
 			children = (
+				8F28C6E828C9D4F70095E375 /* TrackingState.swift */,
 				8F28C6DE28B61E5A0095E375 /* Trip.swift */,
 				8F4667FC28C8B0CF00744F1A /* ViewData.swift */,
 			);
@@ -265,6 +268,7 @@
 			files = (
 				8F4667FD28C8B0CF00744F1A /* ViewData.swift in Sources */,
 				8F28C6CD28B4ED7C0095E375 /* MainViewModel.swift in Sources */,
+				8F28C6E928C9D4F70095E375 /* TrackingState.swift in Sources */,
 				8F9652A828AFA77E003A1F82 /* LocationServiceProtocol.swift in Sources */,
 				8F9652A228AE65CF003A1F82 /* MainViewController.swift in Sources */,
 				8F28C6D028B4EDA70095E375 /* MainViewModelProtocol.swift in Sources */,

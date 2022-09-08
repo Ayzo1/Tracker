@@ -31,8 +31,17 @@ final class MainViewController: UIViewController, MainViewProtocol {
 		map.mapType = .standard
 		map.isZoomEnabled = true
 		map.showsUserLocation = true
-        // map.layer.cornerRadius = map.frame.height / 2
 		return map
+	}()
+	
+	private var startButton: UIButton = {
+		var button = UIButton()
+		button.translatesAutoresizingMaskIntoConstraints = false
+		button.addTarget(self, action: #selector(startButtonAction), for: .touchUpInside)
+		button.setTitle("Start", for: .normal)
+		button.setTitleColor(.black, for: .normal)
+		button.backgroundColor = .orange
+		return button
 	}()
 	
 	// MARK: - init
@@ -51,13 +60,16 @@ final class MainViewController: UIViewController, MainViewProtocol {
     override func viewDidLoad() {
         super.viewDidLoad()
         configurateViews()
-		viewModel.startTracking()
+		//viewModel.startTracking()
 		update()
+		view.layoutSubviews()
+		mapView.layer.cornerRadius = mapView.frame.height / 2
     }
+	
+	
     
     override func viewDidLayoutSubviews() {
-        mapView.layer.cornerRadius = mapView.frame.height / 2
-        print("aaa")
+        // mapView.layer.cornerRadius = mapView.frame.height / 2
     }
 	
 	// MARK: - Private methods
@@ -72,6 +84,8 @@ final class MainViewController: UIViewController, MainViewProtocol {
 		setupMapView()
         view.addSubview(speedLabel)
         setupSpeedLabel()
+		view.addSubview(startButton)
+		setupStartButton()
 	}
 	
 	private func update() {
@@ -82,18 +96,36 @@ final class MainViewController: UIViewController, MainViewProtocol {
                 self?.timeLabel.text = self?.createTimeString(time: time) ?? " "
                 break
             case .location(let location):
-                self?.distanceLabel.text = "\(Int(location.distance))m"
-                self?.speedLabel.text = "\(Int(location.speed))"
-                let coordinate = CLLocationCoordinate2D(latitude: location.latitude, longitude: location.longitude)
-                let span = MKCoordinateSpan(latitudeDelta: 0.01, longitudeDelta: 0.01)
-                let region = MKCoordinateRegion(center: coordinate, span: span)
-                self?.mapView.setRegion(region, animated: true)
+				self?.updateLocation(location: location)
                 break
             case .error(let error):
                 print(error.localizedDescription)
                 break
-            }
+			case .started:
+				self?.startButton.setTitle("Pause", for: .normal)
+				break
+			case .paused:
+				self?.startButton.setTitle("Resume", for: .normal)
+				break
+			case .resumed:
+				self?.startButton.setTitle("Pause", for: .normal)
+				break
+			}
 		}
+	}
+	
+	private func updateLocation(location: ViewData.Location) {
+		distanceLabel.text = "\(Int(location.distance))m"
+		let kph = converMerterPerSecondToKilometersPerHour(speedInMps: location.speed)
+		speedLabel.text = "\(String(format: "%.1f", kph))kph"
+		let coordinate = CLLocationCoordinate2D(latitude: location.latitude, longitude: location.longitude)
+		let span = MKCoordinateSpan(latitudeDelta: 0.01, longitudeDelta: 0.01)
+		let region = MKCoordinateRegion(center: coordinate, span: span)
+		mapView.setRegion(region, animated: true)
+	}
+	
+	private func converMerterPerSecondToKilometersPerHour(speedInMps: Double) -> Double {
+		return speedInMps / 3.6
 	}
 	
 	private func createTimeString(time: TimeInterval) -> String {
@@ -129,9 +161,23 @@ final class MainViewController: UIViewController, MainViewProtocol {
     }
 	
 	private func setupMapView() {
-		mapView.topAnchor.constraint(equalTo: view.topAnchor, constant: 40).isActive = true
+		mapView.topAnchor.constraint(equalTo: view.topAnchor, constant: 60).isActive = true
 		mapView.bottomAnchor.constraint(equalTo: timeLabel.topAnchor, constant: -20).isActive = true
 		mapView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20).isActive = true
 		mapView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20).isActive = true
+	}
+	
+	private func setupStartButton() {
+		startButton.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -30).isActive = true
+		startButton.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
+		startButton.heightAnchor.constraint(equalToConstant: 100).isActive = true
+		startButton.widthAnchor.constraint(equalToConstant: 100).isActive = true
+		startButton.layer.cornerRadius = 100 / 2
+	}
+	
+	// MARK: - objc methods
+	
+	@objc private func startButtonAction() {
+		viewModel.startTracking()
 	}
 }

@@ -24,6 +24,7 @@ final class LocationService: NSObject, LocationServiceProtocol {
 	
 	func stopLocating() {
 		locationManager.stopUpdatingLocation()
+		previousLocation = nil
 	}
 }
 
