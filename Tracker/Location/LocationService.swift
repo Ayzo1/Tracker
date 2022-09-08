@@ -11,11 +11,9 @@ final class LocationService: NSObject, LocationServiceProtocol {
 		super.init()
 		locationManager.delegate = self
 		locationManager.requestAlwaysAuthorization()
-        // locationManager.desiredAccuracy = kCLLocationAccuracyNearestTenMeters
-        // locationManager.distanceFilter = 1
         
-        locationManager.desiredAccuracy = kCLLocationAccuracyBest
-        locationManager.distanceFilter = 1
+        locationManager.desiredAccuracy = kCLLocationAccuracyNearestTenMeters
+        locationManager.distanceFilter = 10
 	}
 	
 	func startLocating() {

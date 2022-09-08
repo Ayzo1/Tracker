@@ -65,13 +65,7 @@ final class MainViewController: UIViewController, MainViewProtocol {
 		view.layoutSubviews()
 		mapView.layer.cornerRadius = mapView.frame.height / 2
     }
-	
-	
-    
-    override func viewDidLayoutSubviews() {
-        // mapView.layer.cornerRadius = mapView.frame.height / 2
-    }
-	
+
 	// MARK: - Private methods
 	
 	private func configurateViews() {
@@ -125,7 +119,7 @@ final class MainViewController: UIViewController, MainViewProtocol {
 	}
 	
 	private func converMerterPerSecondToKilometersPerHour(speedInMps: Double) -> Double {
-		return speedInMps / 3.6
+		return speedInMps * 3.6
 	}
 	
 	private func createTimeString(time: TimeInterval) -> String {
