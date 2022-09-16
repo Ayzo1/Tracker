@@ -60,7 +60,6 @@ final class MainViewController: UIViewController, MainViewProtocol {
     override func viewDidLoad() {
         super.viewDidLoad()
         configurateViews()
-		//viewModel.startTracking()
 		update()
 		view.layoutSubviews()
 		mapView.layer.cornerRadius = mapView.frame.height / 2
@@ -84,7 +83,6 @@ final class MainViewController: UIViewController, MainViewProtocol {
 	
 	private func update() {
 		viewModel.recieveData = { [weak self] viewData in
-            
             switch viewData {
             case .time(let time):
                 self?.timeLabel.text = self?.createTimeString(time: time) ?? " "
@@ -113,7 +111,7 @@ final class MainViewController: UIViewController, MainViewProtocol {
 		let kph = converMerterPerSecondToKilometersPerHour(speedInMps: location.speed)
 		speedLabel.text = "\(String(format: "%.1f", kph))kph"
 		let coordinate = CLLocationCoordinate2D(latitude: location.latitude, longitude: location.longitude)
-		let span = MKCoordinateSpan(latitudeDelta: 0.01, longitudeDelta: 0.01)
+		let span = MKCoordinateSpan(latitudeDelta: 0.005, longitudeDelta: 0.005)
 		let region = MKCoordinateRegion(center: coordinate, span: span)
 		mapView.setRegion(region, animated: true)
 	}

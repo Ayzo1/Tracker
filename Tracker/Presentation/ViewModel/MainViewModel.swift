@@ -22,35 +22,15 @@ final class MainViewModel: MainViewModelProtocol {
 	func startTracking() {
 		switch currentState {
 		case .notTracking:
-			locationService.startLocating()
-			currentState = .tracking
-			self.trip = Trip(startDate: Date(), distance: 0, time: 0, points: [(Double, Double)]())
+			self.trip = Trip(startDates: [Date](), endDates: [Date](),distance: 0, time: 0, points: [(Double, Double)]())
+			startLocating(state: ViewData.started)
 			update()
-			self.timer = Timer.scheduledTimer(
-				timeInterval: 1,
-				target: self,
-				selector: #selector(updateTimer),
-				userInfo: nil,
-				repeats: true)
-			recieveData?(ViewData.started)
-			currentState = .tracking
 			break
 		case .paused:
-			locationService.startLocating()
-			self.timer = Timer.scheduledTimer(
-				timeInterval: 1,
-				target: self,
-				selector: #selector(updateTimer),
-				userInfo: nil,
-				repeats: true)
-			recieveData?(ViewData.resumed)
-			currentState = .tracking
+			startLocating(state: ViewData.resumed)
 			break
 		case .tracking:
-			locationService.stopLocating()
-			timer?.invalidate()
-			recieveData?(ViewData.paused)
-			currentState = .paused
+			stopLocating()
 			break
 		}
 	}
@@ -61,6 +41,34 @@ final class MainViewModel: MainViewModelProtocol {
 	
 	// MARK: - Private methods
 	
+	private func startLocating(state: ViewData) {
+		locationService.startLocating()
+		startTimer()
+		trip?.startDates.append(Date())
+		currentState = .tracking
+		recieveData?(state)
+		currentState = .tracking
+	}
+	
+	private func stopLocating() {
+		locationService.stopLocating()
+		trip?.endDates.append(Date())
+		timer?.invalidate()
+		let time = calculateTime()
+		trip?.time += time
+		recieveData?(ViewData.paused)
+		currentState = .paused
+	}
+	
+	private func startTimer() {
+		self.timer = Timer.scheduledTimer(
+			timeInterval: 1,
+			target: self,
+			selector: #selector(updateTimer),
+			userInfo: nil,
+			repeats: true)
+	}
+	
 	private func update() {
 		locationService.recieveLocation = { [weak self] latitude, longitude, distance, speed in
 			self?.trip?.distance += distance
@@ -70,10 +78,18 @@ final class MainViewModel: MainViewModelProtocol {
 		}
 	}
 	
+	private func calculateTime() -> TimeInterval {
+		guard let startDate = trip?.startDates.last else {
+			return 0
+		}
+		let time = Date().timeIntervalSince(startDate)
+		return time
+	}
+	
 	// MARK: - objc methods
 	
 	@objc private func updateTimer() {
-        let time = Date().timeIntervalSince(trip?.startDate ?? Date())
-        recieveData?(ViewData.time(time))
+		let time = calculateTime()
+		recieveData?(ViewData.time((trip?.time ?? 0) + time))
 	}
 }
