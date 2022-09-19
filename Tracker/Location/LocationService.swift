@@ -24,6 +24,18 @@ final class LocationService: NSObject, LocationServiceProtocol {
 		locationManager.stopUpdatingLocation()
 		previousLocation = nil
 	}
+	
+	private func CalculateSpeed(location: CLLocation) -> CLLocationSpeed {
+		guard let previous = previousLocation else {
+			return 0
+		}
+		let time = location.timestamp.timeIntervalSince(previous.timestamp)
+		if time <= 0 {
+			return 0
+		}
+		let distance = location.distance(from: previous)
+		return distance / time
+	}
 }
 
 extension LocationService: CLLocationManagerDelegate {
@@ -37,7 +49,11 @@ extension LocationService: CLLocationManagerDelegate {
 		if previousLocation != nil {
 			distance = last.distance(from: previousLocation!)
 		}
-        recieveLocation?(last.coordinate.latitude, last.coordinate.longitude, distance, last.speed)
+		var speed = last.speed
+		if speed < 0 {
+			speed = self.CalculateSpeed(location: last)
+		}
+        recieveLocation?(last.coordinate.latitude, last.coordinate.longitude, distance, speed)
 		previousLocation = locations.last
 	}
 }

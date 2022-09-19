@@ -22,7 +22,7 @@ final class MainViewModel: MainViewModelProtocol {
 	func startTracking() {
 		switch currentState {
 		case .notTracking:
-			self.trip = Trip(startDates: [Date](), endDates: [Date](),distance: 0, time: 0, points: [(Double, Double)]())
+			self.trip = Trip(startDates: [Date](), endDates: [Date](), distance: 0, time: 0, points: [(Double, Double)]())
 			startLocating(state: ViewData.started)
 			update()
 			break
