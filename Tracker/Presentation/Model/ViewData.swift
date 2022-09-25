@@ -1,10 +1,3 @@
-//
-//  Model.swift
-//  Tracker
-//
-//  Created by ayaz on 07.09.2022.
-//
-
 import Foundation
 
 enum ViewData {
