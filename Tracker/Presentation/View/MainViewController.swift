@@ -6,6 +6,7 @@ final class MainViewController: UIViewController, MainViewProtocol {
 	// MARK: - Private properties
 	
 	private var viewModel: MainViewModelProtocol
+	private var previousLocation: CLLocationCoordinate2D?
 	
     private var speedLabel: UILabel = {
         let label = UILabel()
@@ -63,6 +64,7 @@ final class MainViewController: UIViewController, MainViewProtocol {
 		update()
 		view.layoutSubviews()
 		mapView.layer.cornerRadius = mapView.frame.height / 2
+		mapView.delegate = self
     }
 
 	// MARK: - Private methods
@@ -93,14 +95,11 @@ final class MainViewController: UIViewController, MainViewProtocol {
             case .error(let error):
                 print(error.localizedDescription)
                 break
-			case .started:
+			case .started, .resumed:
 				self?.startButton.setTitle("Pause", for: .normal)
 				break
 			case .paused:
 				self?.startButton.setTitle("Resume", for: .normal)
-				break
-			case .resumed:
-				self?.startButton.setTitle("Pause", for: .normal)
 				break
 			}
 		}
@@ -111,9 +110,36 @@ final class MainViewController: UIViewController, MainViewProtocol {
 		let kph = converMerterPerSecondToKilometersPerHour(speedInMps: location.speed)
 		speedLabel.text = "\(String(format: "%.1f", kph))kph"
 		let coordinate = CLLocationCoordinate2D(latitude: location.latitude, longitude: location.longitude)
-		let span = MKCoordinateSpan(latitudeDelta: 0.005, longitudeDelta: 0.005)
+		let span = MKCoordinateSpan(latitudeDelta: 0.001, longitudeDelta: 0.001)
 		let region = MKCoordinateRegion(center: coordinate, span: span)
 		mapView.setRegion(region, animated: true)
+		
+		drawRoutes(coordinate: coordinate)
+	}
+	
+	private func drawRoutes(coordinate: CLLocationCoordinate2D) {
+		guard let previous = previousLocation else {
+			previousLocation = coordinate
+			return
+		}
+		
+		let firstItem = MKMapItem(placemark: MKPlacemark(coordinate: previous))
+		let secondItem = MKMapItem(placemark: MKPlacemark(coordinate: coordinate))
+		let request = MKDirections.Request()
+		request.source = firstItem
+		request.destination = secondItem
+		request.transportType = .walking
+		let directions = MKDirections(request: request)
+		directions.calculate { [weak self] response, error in
+			guard let response = response else {
+				return
+			}
+			guard let route = response.routes.first else {
+				return
+			}
+			self?.mapView.addOverlay(route.polyline, level: .aboveRoads)
+		}
+		previousLocation = coordinate
 	}
 	
 	private func converMerterPerSecondToKilometersPerHour(speedInMps: Double) -> Double {
@@ -171,5 +197,15 @@ final class MainViewController: UIViewController, MainViewProtocol {
 	
 	@objc private func startButtonAction() {
 		viewModel.startTracking()
+	}
+}
+
+extension MainViewController: MKMapViewDelegate {
+	
+	func mapView(_ mapView: MKMapView, rendererFor overlay: MKOverlay) -> MKOverlayRenderer {
+		let renderer = MKPolylineRenderer(overlay: overlay)
+		renderer.strokeColor = .red
+		renderer.lineWidth = 4.0
+		return renderer
 	}
 }
